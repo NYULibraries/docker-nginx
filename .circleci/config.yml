@@ -16,9 +16,11 @@ push_docker: &push_docker
     name: Push Docker
     command: |
       export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}
-      docker tag nginx nyulibraries/nginx:${BRANCH_NO_SLASH}
+      export IMAGE=`docker images --format "{{.Repository}}:{{.Tag}}" | grep "nyulibraries/nginx"`
+      docker tag $IMAGE nyulibraries/nginx:${BRANCH_NO_SLASH}
       docker tag nyulibraries/nginx:${BRANCH_NO_SLASH} nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
       docker login -u "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
+      docker push $IMAGE
       docker push nyulibraries/nginx:${BRANCH_NO_SLASH}
       docker push nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
 
@@ -34,7 +36,7 @@ jobs:
 
 workflows:
   version: 2
-  build-test-and-deploy:
+  build:
     jobs:
       - build-image
 
