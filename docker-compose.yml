@@ -1,0 +1,10 @@
+version: "3.2"
+services:
+
+  nginx:
+    image: nyulibraries/nginx:1.15.5-1
+    build:
+      context: .
+      args:
+      - AQUA_MICROSCANNER_TOKEN
+
