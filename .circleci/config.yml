@@ -16,13 +16,19 @@ push_docker: &push_docker
     name: Push Docker
     command: |
       export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}
-      export IMAGE=`docker images --format "{{.Repository}}:{{.Tag}}" | grep "nyulibraries/nginx"`
-      docker tag $IMAGE nyulibraries/nginx:${BRANCH_NO_SLASH}
+      docker tag nyulibraries_nginx nyulibraries/nginx:${BRANCH_NO_SLASH}
       docker tag nyulibraries/nginx:${BRANCH_NO_SLASH} nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
       docker login -u "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
-      docker push $IMAGE
       docker push nyulibraries/nginx:${BRANCH_NO_SLASH}
       docker push nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
+
+push_docker_for_tag: &push_docker_for_tag
+  run:
+    name: Push Docker For Tag
+    command: |
+      docker tag nyulibraries_nginx nyulibraries/nginx:${CIRCLE_TAG}
+      docker login -u "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
+      docker push nyulibraries/nginx:${CIRCLE_TAG}
 
 version: 2
 jobs:
@@ -33,10 +39,21 @@ jobs:
       - setup_remote_docker
       - <<: *build_docker
       - <<: *push_docker
+  build-image-for-tag:
+    <<: *docker-defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - <<: *build_docker
+      - <<: *push_docker_for_tag
 
 workflows:
   version: 2
   build:
     jobs:
       - build-image
-
+      - build-image-for-tag:
+          filters:
+            tags:
+              only:
+                - /[0-9.]+/s
