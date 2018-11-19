@@ -15,6 +15,9 @@ COPY --chown=nginx:nginx nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 RUN mkdir /etc/apache2 && ln -s /etc/apache2/private/htpasswd /etc/apache2/.htpasswd \
   && chown -R nginx:nginx /etc/apache2
 
+# add script to securely generate htpasswd
+COPY --chown=nginx:nginx script/generate_htpasswd.sh /tmp/generate_htpasswd.sh
+
 # security scan
 ARG AQUA_MICROSCANNER_TOKEN
 RUN apk add --no-cache ca-certificates \
