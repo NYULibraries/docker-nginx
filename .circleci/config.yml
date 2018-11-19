@@ -55,5 +55,6 @@ workflows:
       - build-image-for-tag:
           filters:
             tags:
-              only:
-                - /[0-9.]+/s
+              only: /^[0-9.]+/
+            branches:
+              ignore: /.*/
