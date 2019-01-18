@@ -1,6 +1,6 @@
 docker-defaults: &docker-defaults
   docker:
-    - image: nyulibraries/circleci_docker:18.06.1-ce-git-compose-1.22.0
+    - image: quay.io/nyulibraries/circleci_docker:18.06.1-dc-1.23.2-0 
   working_directory: ~/app
 
 build_docker: &build_docker
@@ -16,19 +16,19 @@ push_docker: &push_docker
     name: Push Docker
     command: |
       export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}
-      docker tag nyulibraries_nginx nyulibraries/nginx:${BRANCH_NO_SLASH}
-      docker tag nyulibraries/nginx:${BRANCH_NO_SLASH} nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
-      docker login -u "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
-      docker push nyulibraries/nginx:${BRANCH_NO_SLASH}
-      docker push nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
+      docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}
+      docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
+      docker login -u "$QUAY_USERNAME" --password "$QUAY_PASSWORD" quay.io
+      docker push quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}
+      docker push quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
 
 push_docker_for_tag: &push_docker_for_tag
   run:
     name: Push Docker For Tag
     command: |
-      docker tag nyulibraries_nginx nyulibraries/nginx:${CIRCLE_TAG}
-      docker login -u "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
-      docker push nyulibraries/nginx:${CIRCLE_TAG}
+      docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${CIRCLE_TAG}
+      docker login -u "$QUAY_USERNAME" --password "$QUAY_PASSWORD" quay.io
+      docker push quay.io/nyulibraries/nginx:${CIRCLE_TAG}
 
 version: 2
 jobs:
