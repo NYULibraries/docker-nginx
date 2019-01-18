@@ -17,7 +17,7 @@ push_docker: &push_docker
     command: |
       export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}
       docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}
-      docker tag nyulibraries/nginx:${BRANCH_NO_SLASH} quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
+      docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
       docker login -u "$QUAY_USERNAME" --password "$QUAY_PASSWORD" quay.io
       docker push quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}
       docker push quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
