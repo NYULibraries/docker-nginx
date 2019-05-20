@@ -1,13 +1,23 @@
 docker-defaults: &docker-defaults
   docker:
-    - image: quay.io/nyulibraries/circleci_docker:18.06.1-dc-1.23.2-0 
+    - image: quay.io/nyulibraries/circleci_docker:18.06.3-dc-1.23.2-0
   working_directory: ~/app
+
+environment-defaults: &environment-defaults
+  environment:
+    NGINX_VERSION: '1.15.12'
+    PATCH: '0'
+
+setup_env_vars: &setup_env_vars
+    run:
+      name: Sets up interpolated environment variables
+      command: |
+        echo 'export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}' >> $BASH_ENV
 
 build_docker: &build_docker
   run:
     name: Build Docker
     command: |
-      export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}
       touch secrets.env
       docker-compose build
 
@@ -15,7 +25,6 @@ push_docker: &push_docker
   run:
     name: Push Docker
     command: |
-      export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}
       docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}
       docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${BRANCH_NO_SLASH}-${CIRCLE_SHA1}
       docker login -u "$QUAY_USERNAME" --password "$QUAY_PASSWORD" quay.io
@@ -30,22 +39,43 @@ push_docker_for_tag: &push_docker_for_tag
       docker login -u "$QUAY_USERNAME" --password "$QUAY_PASSWORD" quay.io
       docker push quay.io/nyulibraries/nginx:${CIRCLE_TAG}
 
+push_prerelease_for_master: &push_prerelease_for_master
+  run:
+    name: Pushes prerelease docker image to quay
+    command: |
+      docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${NGINX_VERSION}-${PATCH}
+      docker login -u "$QUAY_USERNAME" --password "$QUAY_PASSWORD" quay.io
+      docker push quay.io/nyulibraries/nginx:${NGINX_VERSION}-${PATCH}-pre
+
 version: 2
 jobs:
   build-image:
     <<: *docker-defaults
+    <<: *environment-defaults
     steps:
       - checkout
       - setup_remote_docker
+      - <<: *setup_env_vars
       - <<: *build_docker
       - <<: *push_docker
   build-image-for-tag:
     <<: *docker-defaults
+    <<: *environment-defaults
     steps:
       - checkout
       - setup_remote_docker
+      - <<: *setup_env_vars
       - <<: *build_docker
       - <<: *push_docker_for_tag
+  build-cannonical-image:
+    <<: *docker-defaults
+    <<: *environment-defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - <<: *setup_env_vars
+      - <<: *build_docker
+      - <<: *push_prerelease_for_master
 
 workflows:
   version: 2
@@ -55,6 +85,10 @@ workflows:
       - build-image-for-tag:
           filters:
             tags:
-              only: /.*/ 
+              only: /.*/
             branches:
               ignore: /.*/
+      - build-cannonical-image:
+          filters:
+            branches:
+              only: master
