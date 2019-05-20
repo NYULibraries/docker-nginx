@@ -1,4 +1,6 @@
-FROM nginx:1.15.8-alpine
+ARG NGINX_VERSION
+
+FROM nginx:${NGINX_VERSION}-alpine
 
 RUN apk add --no-cache --update apache2-utils
 

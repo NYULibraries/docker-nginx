@@ -2,9 +2,10 @@ version: "3.2"
 services:
 
   nginx:
-    image: nyulibraries_nginx 
+    image: nyulibraries_nginx
     build:
       context: .
       args:
-      - AQUA_MICROSCANNER_TOKEN
-
+        AQUA_MICROSCANNER_TOKEN: ${AQUA_MICROSCANNER_TOKEN}
+        NGINX_VERSION: ${NGINX_VERSION}
+        PATCH:  ${PATCH}
