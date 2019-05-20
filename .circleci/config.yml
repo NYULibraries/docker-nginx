@@ -43,9 +43,10 @@ push_prerelease_for_master: &push_prerelease_for_master
   run:
     name: Pushes prerelease docker image to quay
     command: |
-      docker tag nyulibraries_nginx quay.io/nyulibraries/nginx:${NGINX_VERSION}-${PATCH}
+      export QUAY_TAG=quay.io/nyulibraries/nginx:${NGINX_VERSION}-${PATCH}-pre
+      docker tag nyulibraries_nginx $QUAY_TAG
       docker login -u "$QUAY_USERNAME" --password "$QUAY_PASSWORD" quay.io
-      docker push quay.io/nyulibraries/nginx:${NGINX_VERSION}-${PATCH}-pre
+      docker push $QUAY_TAG
 
 version: 2
 jobs:
@@ -67,7 +68,7 @@ jobs:
       - <<: *setup_env_vars
       - <<: *build_docker
       - <<: *push_docker_for_tag
-  build-cannonical-image:
+  build-prerelease-image:
     <<: *docker-defaults
     <<: *environment-defaults
     steps:
@@ -88,7 +89,7 @@ workflows:
               only: /.*/
             branches:
               ignore: /.*/
-      - build-cannonical-image:
+      - build-prerelease-image:
           filters:
             branches:
               only: master
