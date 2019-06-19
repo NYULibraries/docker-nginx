@@ -20,14 +20,5 @@ RUN mkdir /etc/apache2 && ln -s /etc/apache2/private/htpasswd /etc/apache2/.htpa
 # add script to securely generate htpasswd
 COPY --chown=nginx:nginx script/generate_htpasswd.sh /tmp/generate_htpasswd.sh
 
-# security scan
-ARG AQUA_MICROSCANNER_TOKEN
-RUN apk add --no-cache ca-certificates \
-  && wget -O /microscanner https://get.aquasec.com/microscanner \
-  && chmod +x /microscanner \
-  && /microscanner ${AQUA_MICROSCANNER_TOKEN} \
-  && rm -rf /microscanner \
-  && apk del ca-certificates
-
 # use non-root user
 USER nginx
