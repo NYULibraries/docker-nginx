@@ -3,11 +3,6 @@ docker-defaults: &docker-defaults
     - image: quay.io/nyulibraries/circleci_docker:18.06.3-dc-1.23.2-0
   working_directory: ~/app
 
-  #environment-defaults: &environment-defaults
-  #  environment:
-  #    NGINX_VERSION: '1.17.0'
-  #    PATCH: '0'
-
 setup_env_vars: &setup_env_vars
     run:
       name: Sets up environment variables
