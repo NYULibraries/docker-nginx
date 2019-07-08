@@ -6,6 +6,5 @@ services:
     build:
       context: .
       args:
-        AQUA_MICROSCANNER_TOKEN: ${AQUA_MICROSCANNER_TOKEN}
         NGINX_VERSION: ${NGINX_VERSION}
         PATCH: ${PATCH}

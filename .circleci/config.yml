@@ -3,15 +3,11 @@ docker-defaults: &docker-defaults
     - image: quay.io/nyulibraries/circleci_docker:18.06.3-dc-1.23.2-0
   working_directory: ~/app
 
-environment-defaults: &environment-defaults
-  environment:
-    NGINX_VERSION: '1.17.0'
-    PATCH: '0'
-
 setup_env_vars: &setup_env_vars
     run:
-      name: Sets up interpolated environment variables
+      name: Sets up environment variables
       command: |
+        echo 'export $(cat .env | xargs)' >> $BASH_ENV
         echo 'export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}' >> $BASH_ENV
 
 build_docker: &build_docker
@@ -52,7 +48,6 @@ version: 2
 jobs:
   build-image:
     <<: *docker-defaults
-    <<: *environment-defaults
     steps:
       - checkout
       - setup_remote_docker
@@ -61,7 +56,6 @@ jobs:
       - <<: *push_docker
   build-image-for-tag:
     <<: *docker-defaults
-    <<: *environment-defaults
     steps:
       - checkout
       - setup_remote_docker
@@ -70,7 +64,6 @@ jobs:
       - <<: *push_docker_for_tag
   build-prerelease-image:
     <<: *docker-defaults
-    <<: *environment-defaults
     steps:
       - checkout
       - setup_remote_docker
