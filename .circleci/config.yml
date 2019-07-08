@@ -12,7 +12,7 @@ setup_env_vars: &setup_env_vars
     run:
       name: Sets up environment variables
       command: |
-        export $(cat .env | xargs)
+        echo 'export $(cat .env | xargs)' >> $BASH_ENV
         echo 'export BRANCH_NO_SLASH=${CIRCLE_BRANCH//\//_}' >> $BASH_ENV
 
 build_docker: &build_docker
