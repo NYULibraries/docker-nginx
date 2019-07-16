@@ -41,8 +41,10 @@ push_prerelease_for_master: &push_prerelease_for_master
     command: |
       export QUAY_TAG=quay.io/nyulibraries/nginx:${NGINX_VERSION}-${PATCH}-pre
       docker tag nyulibraries_nginx $QUAY_TAG
+      docker tag nyulibraries_nginx $QUAY_TAG-$CIRCLE_SHA1
       docker login -u "$QUAY_USERNAME" --password "$QUAY_PASSWORD" quay.io
       docker push $QUAY_TAG
+      docker push $QUAY_TAG-$CIRCLE_SHA1
 
 version: 2
 jobs:
