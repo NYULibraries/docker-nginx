@@ -12,6 +12,7 @@ RUN touch /var/run/nginx.pid \
 # use configs that default to 8080 and output error logs to stdout
 COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
 COPY --chown=nginx:nginx nginx.vh.default.conf /etc/nginx/conf.d/default.conf
+COPY --chown=nginx:nginx enabled-modules.conf /etc/nginx/enabled-modules.conf
 
 # setup htpasswd
 RUN mkdir /etc/apache2 && ln -s /etc/apache2/private/htpasswd /etc/apache2/.htpasswd \
