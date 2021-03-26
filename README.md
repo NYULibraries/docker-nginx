@@ -13,5 +13,5 @@ Build off base alpine nginx image with additional defaults for kubernetes and se
 ## Generate secure htpasswd file
 
 ```
-docker run --rm nyulibraries/nginx:master /tmp/generate_htpasswd.sh $USERNAME
+docker run --rm -it nyulibraries/nginx:master /tmp/generate_htpasswd.sh $USERNAME
 ```
