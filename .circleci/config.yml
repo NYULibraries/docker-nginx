@@ -1,6 +1,6 @@
-docker-defaults: &docker-defaults
-  docker:
-    - image: quay.io/nyulibraries/circleci_docker:18.06.3-dc-1.23.2-0
+machine-defaults: &machine-defaults
+  machine:
+    image: ubuntu-2204:current
   working_directory: ~/app
 
 setup_env_vars: &setup_env_vars
@@ -47,26 +47,26 @@ push_prerelease_for_master: &push_prerelease_for_master
 version: 2
 jobs:
   build-image:
-    <<: *docker-defaults
+    <<: *machine-defaults
     steps:
       - checkout
-      - setup_remote_docker
+      #- setup_remote_docker
       - <<: *setup_env_vars
       - <<: *build_docker
       - <<: *push_docker
   build-image-for-tag:
-    <<: *docker-defaults
+    <<: *machine-defaults
     steps:
       - checkout
-      - setup_remote_docker
+      #- setup_remote_docker
       - <<: *setup_env_vars
       - <<: *build_docker
       - <<: *push_docker_for_tag
   build-prerelease-image:
-    <<: *docker-defaults
+    <<: *machine-defaults
     steps:
       - checkout
-      - setup_remote_docker
+      #- setup_remote_docker
       - <<: *setup_env_vars
       - <<: *build_docker
       - <<: *push_prerelease_for_master
