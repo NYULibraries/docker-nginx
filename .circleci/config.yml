@@ -47,7 +47,7 @@ push_prerelease_for_master: &push_prerelease_for_master
 version: 2
 jobs:
   build-image:
-    <<: *docker-defaults
+    <<: *machine-defaults
     steps:
       - checkout
       #- setup_remote_docker
@@ -55,7 +55,7 @@ jobs:
       - <<: *build_docker
       - <<: *push_docker
   build-image-for-tag:
-    <<: *docker-defaults
+    <<: *machine-defaults
     steps:
       - checkout
       #- setup_remote_docker
@@ -63,7 +63,7 @@ jobs:
       - <<: *build_docker
       - <<: *push_docker_for_tag
   build-prerelease-image:
-    <<: *docker-defaults
+    <<: *machine-defaults
     steps:
       - checkout
       #- setup_remote_docker
